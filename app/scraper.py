@@ -35,7 +35,7 @@ def scrape_dynamic_website(url: str):
     chrome_options.binary_location = "/usr/bin/google-chrome"  # Explicitly set binary path
 
     try:
-        service = Service("/usr/local/bin/chromedriver")
+        service = Service("/usr/bin/chromedriver")
         driver = webdriver.Chrome(service=service, options=chrome_options)
         
         driver.get(url)
