@@ -1,34 +1,39 @@
-# Use official lightweight Python image
+# Use Python base image
 FROM python:3.10-slim
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y wget unzip curl gnupg xvfb \
-    && curl -fsSL https://dl.google.com/linux/linux_signing_key.pub | apt-key add - \
-    && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | tee /etc/apt/sources.list.d/google-chrome.list \
-    && apt-get update && apt-get install -y google-chrome-stable \
-    && CHROME_VERSION=$(google-chrome --version | awk '{print $3}') \
-    && CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION%.*}") \
+RUN apt-get update && apt-get install -y \
+    wget \
+    unzip \
+    curl \
+    gnupg \
+    xvfb \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Google Chrome (Stable)
+RUN wget -q -O google-chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+    && dpkg -i google-chrome.deb || apt-get -f install -y \
+    && rm google-chrome.deb
+
+# Install ChromeDriver (Compatible version)
+RUN CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d. -f1) \
+    && CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION}") \
     && wget -q "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip" -O /tmp/chromedriver.zip \
     && unzip /tmp/chromedriver.zip -d /usr/local/bin/ \
     && chmod +x /usr/local/bin/chromedriver \
-    && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/*
+    && rm -rf /tmp/*
 
-# Set environment variables to avoid Chrome sandbox issues
-ENV DISPLAY=:99
-ENV CHROME_BIN=/usr/bin/google-chrome
-ENV CHROMEDRIVER_PATH=/usr/local/bin/chromedriver
-
-# Set the working directory
+# Set working directory
 WORKDIR /
 
-# Copy all project files
+# Copy project files
 COPY . .
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose the dynamic port assigned by Render
+# Expose the port (Render dynamically assigns it)
 EXPOSE 8000
 
-# Start the X virtual framebuffer (needed for headless Chrome)
-CMD Xvfb :99 -screen 0 1024x768x16 & uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
+# Run FastAPI server with dynamic port binding
+CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"]
