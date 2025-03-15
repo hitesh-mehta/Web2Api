@@ -12,7 +12,7 @@ def generate_api_structure(scraped_data):
     - HTTP methods (GET/POST)
     - JSON responses
     Do not give any documentation here as I'll get that separately.
-    Properly structure the API for a RESTful design. Do not use any formatting.
+    Properly structure the API for a RESTful design. Reply in plain text without any quotes, code blocks, markdown, or special formatting.
     """
 
     response = genai.GenerativeModel("gemini-1.5-pro").generate_content(prompt)
