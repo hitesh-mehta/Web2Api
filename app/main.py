@@ -37,5 +37,5 @@ async def generate_api(url: str):
 # 🚀 Run on an empty port dynamically assigned by Render
 if __name__ == "__main__":
     import uvicorn
-    port = int(os.environ.get("PORT", 9000))
+    port = int(os.environ.get("PORT", 10000))  # Default to 10000 if PORT not found
     uvicorn.run(app, host="0.0.0.0", port=port)
