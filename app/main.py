@@ -9,7 +9,7 @@ import os
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://web2api-helper.lovable.app/","http://localhost:8080"],  # Replace "*" with ["https://your-frontend.com"] in production
+    allow_origins=["https://web2api-helper.lovable.app/","http://localhost:8080","https://web2api.netlify.app/"],  # Replace "*" with ["https://your-frontend.com"] in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
