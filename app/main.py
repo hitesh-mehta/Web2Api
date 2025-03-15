@@ -14,6 +14,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+@app.options("/{full_path:path}")
+async def preflight(full_path: str):
+    return JSONResponse(status_code=200, headers={
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "*",
+        "Access-Control-Allow-Headers": "*"
+    })
 
 def is_inadequate(scraped_data):
     if "links" in scraped_data and len(scraped_data.keys()) == 1:
