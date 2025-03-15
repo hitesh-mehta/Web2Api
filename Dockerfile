@@ -15,11 +15,14 @@ RUN wget -q -O google-chrome.deb https://dl.google.com/linux/direct/google-chrom
     && dpkg -i google-chrome.deb || apt-get -f install -y \
     && rm google-chrome.deb
 
-# Install ChromeDriver (Pinned Version to avoid dynamic issues)
-RUN wget -q -O /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip \
-    && unzip /tmp/chromedriver.zip -d /usr/local/bin/ \
-    && chmod +x /usr/local/bin/chromedriver \
+# Get the exact Chrome version
+RUN GOOGLE_CHROME_VERSION=$(google-chrome --version | awk '{print $3}') \
+    && echo "Using Chrome version: $GOOGLE_CHROME_VERSION" \
+    && wget -q -O /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/$GOOGLE_CHROME_VERSION/chromedriver_linux64.zip \
+    && unzip /tmp/chromedriver.zip -d /usr/bin/ \
+    && chmod +x /usr/bin/chromedriver \
     && rm -rf /tmp/*
+
 
 # Set working directory
 WORKDIR /
