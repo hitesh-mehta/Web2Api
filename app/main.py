@@ -6,6 +6,7 @@ from app.ai_processor import generate_api_structure
 from app.docs_generator import generate_openapi_doc
 import os
 # Allow CORS from all domains (for testing) or restrict to your frontend domain
+app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Replace "*" with ["https://your-frontend.com"] in production
@@ -13,7 +14,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app = FastAPI()
 
 def is_inadequate(scraped_data):
     if "links" in scraped_data and len(scraped_data.keys()) == 1:
