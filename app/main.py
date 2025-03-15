@@ -1,10 +1,18 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from app.scraper import scrape_static_website, scrape_dynamic_website
 from app.ai_processor import generate_api_structure
 from app.docs_generator import generate_openapi_doc
 import os
-
+# Allow CORS from all domains (for testing) or restrict to your frontend domain
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Replace "*" with ["https://your-frontend.com"] in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app = FastAPI()
 
 def is_inadequate(scraped_data):
