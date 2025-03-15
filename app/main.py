@@ -29,7 +29,9 @@ async def generate_api(url: str):
                 scraped_data = static_scraped_data
 
         ai_generated_api = generate_api_structure(scraped_data)
-        return {"success": True, "api": ai_generated_api}
+        api = ai_generated_api[0]
+        documentation = ai_generated_api[1]
+        return {"success": True, "api": api,"documentation":documentation}
 
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
