@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from app.scraper import scrape_static_website, scrape_dynamic_website
 from app.ai_processor import generate_api_structure
+from app.docs_generator import generate_openapi_doc
 import os
 
 app = FastAPI()
@@ -28,9 +29,8 @@ async def generate_api(url: str):
             else:
                 scraped_data = static_scraped_data
 
-        ai_generated_api = generate_api_structure(scraped_data)
-        api = ai_generated_api[0]
-        documentation = ai_generated_api[1]
+        api = generate_api_structure(scraped_data)
+        documentation = generate_openapi_doc(api)
         return {"success": True, "api": api,"documentation":documentation}
 
     except Exception as e:

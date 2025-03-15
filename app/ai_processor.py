@@ -1,6 +1,5 @@
 import google.generativeai as genai
 from config import GEMINI_API_KEY
-from docs_generator import generate_openapi_doc
 genai.configure(api_key=GEMINI_API_KEY)
 
 def generate_api_structure(scraped_data):
@@ -16,5 +15,4 @@ def generate_api_structure(scraped_data):
     """
 
     response = genai.GenerativeModel("gemini-1.5-pro").generate_content(prompt)
-    documentation = generate_openapi_doc(response.text)
-    return [response.text, documentation]
+    return response.text
