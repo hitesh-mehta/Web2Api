@@ -19,26 +19,21 @@ def scrape_static_website(url: str):
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager
 
 def scrape_dynamic_website(url):
     chrome_options = Options()
-    chrome_options.add_argument("--headless")  # Run in headless mode
+    chrome_options.add_argument("--headless")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     
-    # 🛠 Set user-agent here
-    chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+    # Use installed Chrome binary
+    chrome_options.binary_location = "/usr/bin/google-chrome"
 
-    # 🛠 Automatically downloads & manages ChromeDriver
-    service = Service(ChromeDriverManager().install())
+    # Use installed Chromedriver
+    service = Service("/usr/bin/chromedriver")
     driver = webdriver.Chrome(service=service, options=chrome_options)
-    
+
     driver.get(url)
-    
-    # Wait for JavaScript to load (increase time if needed)
-    driver.implicitly_wait(5)
-    
-    content = driver.page_source
+    page_source = driver.page_source
     driver.quit()
-    return content  
+    return {"html": page_source}
