@@ -2,14 +2,15 @@
 FROM python:3.10-slim
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y wget unzip curl \
-    && wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
-    && dpkg -i google-chrome-stable_current_amd64.deb || apt-get -f install -y \
-    && rm google-chrome-stable_current_amd64.deb \
-    && wget -q https://chromedriver.storage.googleapis.com/$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_linux64.zip \
-    && unzip chromedriver_linux64.zip \
-    && mv chromedriver /usr/bin/chromedriver \
-    && chmod +x /usr/bin/chromedriver
+RUN apt-get update && apt-get install -y wget unzip curl gnupg \
+    && curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | tee /etc/apt/sources.list.d/google-chrome.list \
+    && apt-get update && apt-get install -y google-chrome-stable \
+    && CHROME_VERSION=$(google-chrome --version | awk '{print $3}') \
+    && wget -q "https://chromedriver.storage.googleapis.com/${CHROME_VERSION}/chromedriver_linux64.zip" -O /tmp/chromedriver.zip \
+    && unzip /tmp/chromedriver.zip -d /usr/local/bin/ \
+    && chmod +x /usr/local/bin/chromedriver \
+    && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/*
 
 # Set the working directory to root
 WORKDIR /

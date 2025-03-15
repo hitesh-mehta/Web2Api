@@ -18,22 +18,14 @@ def scrape_static_website(url: str):
 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
 
 def scrape_dynamic_website(url):
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    
-    # Use installed Chrome binary
-    chrome_options.binary_location = "/usr/bin/google-chrome"
+    options = webdriver.ChromeOptions()
+    options.binary_location = "/usr/bin/google-chrome"  # Explicitly set Chrome binary path
+    service = Service("/usr/local/bin/chromedriver")  # Use installed ChromeDriver
 
-    # Use installed Chromedriver
-    service = Service("/usr/bin/chromedriver")
-    driver = webdriver.Chrome(service=service, options=chrome_options)
-
+    driver = webdriver.Chrome(service=service, options=options)
     driver.get(url)
-    page_source = driver.page_source
+    data = driver.page_source
     driver.quit()
-    return {"html": page_source}
+    return {"html": data}
